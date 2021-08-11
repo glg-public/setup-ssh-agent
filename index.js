@@ -4,7 +4,7 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 const io = require('@actions/io');
 
-const reVariables = /^(?<name>SH_AUTH_SOCK|SSH_AGENT_PID)=(?<value>[^;]+);/;
+const reVariables = /^(?<name>SSH_AUTH_SOCK|SSH_AGENT_PID)=(?<value>[^;]+);/;
 
 const run = async () => {
   let exitCode;
@@ -45,6 +45,7 @@ const run = async () => {
 
     if (match) {
       core.exportVariable(match.groups.name, match.groups.value);
+      core.info(`exported environment variable: ${match.groups.name}=${match.groups.value}`);
     }
   });
 
