@@ -8,5 +8,8 @@ steps:
   - uses: glg-public/setup-ssh-agent@v1
     with:
       ssh-private-key: ${{ secrets.DEPLOYMENT_SSH_KEY }}
-  - run: npm install
+  - run: |
+      npm clean-install
+      npm run lint
+      rnpm test
 ```
