@@ -1921,9 +1921,9 @@ const run = async () => {
 };
 
 const cleanup = async () => {
-  const exitCode = exec.exec('ssh-agent', ['-k']);
+  const exitCode = await exec.exec('ssh-agent', ['-k']);
   if (exitCode) {
-    core.setFailed('ssh-agent failed to start');
+    core.setFailed('ssh-agent was not stopped');
   }
 };
 
