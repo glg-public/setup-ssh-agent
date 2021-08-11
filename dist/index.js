@@ -1776,6 +1776,14 @@ module.exports = require("fs");
 
 /***/ }),
 
+/***/ 225:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs/promises");
+
+/***/ }),
+
 /***/ 87:
 /***/ ((module) => {
 
@@ -1857,13 +1865,14 @@ module.exports = require("util");
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-const fs = __nccwpck_require__(747);
+const fs = __nccwpck_require__(225);
+const nodeExec = __nccwpck_require__(669).promisify(__nccwpck_require__(129).exec);
 
 const core = __nccwpck_require__(186);
 const exec = __nccwpck_require__(514);
 const io = __nccwpck_require__(436);
 
-const reVariables = /^(?<name>SH_AUTH_SOCK|SSH_AGENT_PID)=(?<value>[^;]+);/;
+const reVariables = /^(?<name>SSH_AUTH_SOCK|SSH_AGENT_PID)=(?<value>[^;]+);/;
 
 const run = async () => {
   let exitCode;
@@ -1877,11 +1886,14 @@ const run = async () => {
     return;
   }
 
-  exitCode = await exec.exec('ssh-keyscan', ['-t', 'rsa', 'github.com'], {
-    silent: true,
-    outStream: fs.createWriteStream('~/.ssh/known_hosts'),
-  });
-  if (exitCode) {
+  // working around a GitHub toolkit bug
+  // https://github.com/actions/toolkit/issues/649
+  try {
+    const { stdout } = await nodeExec('ssh-keyscan -t rsa github.com');
+
+    await fs.writeFile('~/.ssh/known_hosts', stdout, { flags: 'a' });
+  }
+  catch (e) {
     core.setFailed('ssh-keyscan failed');
     return;
   }
@@ -1904,6 +1916,7 @@ const run = async () => {
 
     if (match) {
       core.exportVariable(match.groups.name, match.groups.value);
+      core.info(`exported environment variable: ${match.groups.name}=${match.groups.value}`);
     }
   });
 

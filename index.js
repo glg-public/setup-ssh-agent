@@ -1,4 +1,5 @@
-const fs = require('fs');
+const fs = require('fs/promises');
+const nodeExec = require('util').promisify(require('child_process').exec);
 
 const core = require('@actions/core');
 const exec = require('@actions/exec');
@@ -18,11 +19,14 @@ const run = async () => {
     return;
   }
 
-  exitCode = await exec.exec('ssh-keyscan', ['-t', 'rsa', 'github.com'], {
-    silent: true,
-    outStream: fs.createWriteStream('~/.ssh/known_hosts'),
-  });
-  if (exitCode) {
+  // working around a GitHub toolkit bug
+  // https://github.com/actions/toolkit/issues/649
+  try {
+    const { stdout } = await nodeExec('ssh-keyscan -t rsa github.com');
+
+    await fs.writeFile('~/.ssh/known_hosts', stdout, { flags: 'a' });
+  }
+  catch (e) {
     core.setFailed('ssh-keyscan failed');
     return;
   }
