@@ -18,7 +18,7 @@ const run = async () => {
     return;
   }
 
-  exitCode = await exec.exec('ssh-keyscan -t rsa github.com', {
+  exitCode = await exec.exec('ssh-keyscan', ['-t', 'rsa', 'github.com'], {
     silent: true,
     outStream: fs.createWriteStream('~/.ssh/known_hosts'),
   });
@@ -28,7 +28,7 @@ const run = async () => {
   }
 
   let stdout = '';
-  exitCode = await exec.exec('ssh-agent', {
+  exitCode = await exec.exec('ssh-agent', [], {
     listeners: {
       stdout: data => {
         stdout += data.toString();
@@ -48,7 +48,7 @@ const run = async () => {
     }
   });
 
-  exitCode = await exec.exec('ssh-add -', {
+  exitCode = await exec.exec('ssh-add', ['-'], {
     input: Buffer.from(encoding ? Buffer.from(key, encoding).totring('ascii') : key),
   });
   if (exitCode) {
@@ -57,7 +57,7 @@ const run = async () => {
 };
 
 const cleanup = async () => {
-  const exitCode = exec.exec('ssh-agent -k');
+  const exitCode = exec.exec('ssh-agent', ['-k']);
   if (exitCode) {
     core.setFailed('ssh-agent failed to start');
   }
