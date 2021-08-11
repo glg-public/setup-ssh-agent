@@ -1927,10 +1927,11 @@ const cleanup = async () => {
   }
 };
 
-if (process.env.STATE_isPost) {
+if (core.getState('isPost') === 'true') {
   cleanup();
 }
 else {
+  core.saveState('isPost', 'true');
   run();
 }
 
