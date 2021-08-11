@@ -1,4 +1,4 @@
-const fs = require('fs/promises');
+const fs = require('fs').promises;
 const nodeExec = require('util').promisify(require('child_process').exec);
 
 const core = require('@actions/core');

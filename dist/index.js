@@ -1776,14 +1776,6 @@ module.exports = require("fs");
 
 /***/ }),
 
-/***/ 225:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("fs/promises");
-
-/***/ }),
-
 /***/ 87:
 /***/ ((module) => {
 
@@ -1865,7 +1857,7 @@ module.exports = require("util");
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-const fs = __nccwpck_require__(225);
+const fs = __nccwpck_require__(747).promises;
 const nodeExec = __nccwpck_require__(669).promisify(__nccwpck_require__(129).exec);
 
 const core = __nccwpck_require__(186);
