@@ -1908,7 +1908,7 @@ const run = async () => {
   });
 
   exitCode = await exec.exec('ssh-add', ['-'], {
-    input: Buffer.from(encoding ? Buffer.from(key, encoding).totring('ascii') : key),
+    input: Buffer.from(encoding ? Buffer.from(key, encoding).toString('ascii') : key),
   });
   if (exitCode) {
     core.setFailed('ssh-add failed');
