@@ -1,0 +1,20 @@
+name: Setup SSH Agent
+description: Useful for pulling from private repositories
+author: Phred <fearphage+github@gmail.com>
+inputs:
+  ssh-private-key:
+    description: Private key to add to ssh agent
+    required: true
+  encoding:
+    description: Encoding used for SSH key
+    required: false
+    default: base64
+
+runs:
+  using: node12
+  main: index.js
+  post: post.js
+
+branding:
+  icon: unlock
+  color: green
