@@ -11,5 +11,5 @@ steps:
   - run: |
       npm clean-install
       npm run lint
-      rnpm test
+      npm test
 ```
