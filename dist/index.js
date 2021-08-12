@@ -1858,7 +1858,6 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 const fs = __nccwpck_require__(747).promises;
-const nodeExec = __nccwpck_require__(669).promisify(__nccwpck_require__(129).exec);
 
 const core = __nccwpck_require__(186);
 const exec = __nccwpck_require__(514);
@@ -1881,7 +1880,7 @@ const run = async () => {
   // working around a GitHub toolkit bug
   // https://github.com/actions/toolkit/issues/649
   try {
-    const { stdout } = await nodeExec('ssh-keyscan -t rsa github.com');
+    const { stdout } = await exec.getExecOutput('ssh-keyscan -t rsa github.com');
 
     await fs.writeFile('~/.ssh/known_hosts', stdout, { flags: 'a' });
   }
@@ -1893,17 +1892,17 @@ const run = async () => {
   let stdout = '';
   exitCode = await exec.exec('ssh-agent', [], {
     listeners: {
-      stdout: data => {
+      stdout: (data) => {
         stdout += data.toString();
-      }
-    }
+      },
+    },
   });
   if (exitCode) {
     core.setFailed('ssh-agent failed to start');
     return;
   }
 
-  stdout.trim().split('\n').forEach(line => {
+  stdout.trim().split('\n').forEach((line) => {
     const match = line.match(reVariables);
 
     if (match) {

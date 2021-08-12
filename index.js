@@ -1,5 +1,4 @@
 const fs = require('fs').promises;
-const nodeExec = require('util').promisify(require('child_process').exec);
 
 const core = require('@actions/core');
 const exec = require('@actions/exec');
@@ -22,7 +21,7 @@ const run = async () => {
   // working around a GitHub toolkit bug
   // https://github.com/actions/toolkit/issues/649
   try {
-    const { stdout } = await nodeExec('ssh-keyscan -t rsa github.com');
+    const { stdout } = await exec.getExecOutput('ssh-keyscan -t rsa github.com');
 
     await fs.writeFile('~/.ssh/known_hosts', stdout, { flags: 'a' });
   }
@@ -34,17 +33,17 @@ const run = async () => {
   let stdout = '';
   exitCode = await exec.exec('ssh-agent', [], {
     listeners: {
-      stdout: data => {
+      stdout: (data) => {
         stdout += data.toString();
-      }
-    }
+      },
+    },
   });
   if (exitCode) {
     core.setFailed('ssh-agent failed to start');
     return;
   }
 
-  stdout.trim().split('\n').forEach(line => {
+  stdout.trim().split('\n').forEach((line) => {
     const match = line.match(reVariables);
 
     if (match) {
