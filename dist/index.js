@@ -1931,7 +1931,10 @@ if (core.getState('isPost') === 'true') {
 }
 else {
   core.saveState('isPost', 'true');
-  run();
+
+  run()
+    .catch((e) => core.setFailed(e.message))
+  ;
 }
 
 })();
